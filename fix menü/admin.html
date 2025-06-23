@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Yönetici Paneli - Siparişler</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f2f2f2;
+      margin: 0;
+      padding: 20px;
+    }
+
+    h1 {
+      color: #793d15;
+      text-align: center;
+    }
+
+    .order-list {
+      max-width: 600px;
+      margin: 30px auto;
+      background: white;
+      border-radius: 10px;
+      padding: 20px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+
+    .order-item {
+      border-bottom: 1px solid #ddd;
+      padding: 10px 0;
+    }
+
+    .order-item:last-child {
+      border-bottom: none;
+    }
+
+    .order-time {
+      color: #777;
+      font-size: 0.9em;
+    }
+
+    .clear-btn {
+      display: block;
+      margin: 20px auto;
+      padding: 10px 20px;
+      background-color: #cc0000;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .clear-btn:hover {
+      background-color: #a00000;
+    }
+  </style>
+</head>
+<body>
+  <h1>Fix 33 Döner - Sipariş Listesi</h1>
+  <div class="order-list" id="orderList">
+  </div>
+
+  <button class="clear-btn" onclick="clearOrders()">Tüm Siparişleri Temizle</button>
+
+<script>
+  const tabs = document.querySelectorAll(".tab");
+  const sections = document.querySelectorAll(".category-section");
+
+  tabs.forEach(tab => {
+    tab.addEventListener("click", () => {
+      tabs.forEach(t => t.classList.remove("active"));
+      tab.classList.add("active");
+
+      sections.forEach(sec => sec.classList.remove("active"));
+      document.getElementById(tab.dataset.target).classList.add("active");
+    });
+  });
+
+ function placeOrder(itemName) {
+  const now = new Date().toLocaleString();
+  const orders = JSON.parse(localStorage.getItem("siparisler")) || [];
+
+  orders.push({ name: itemName, time: now });
+  localStorage.setItem("siparisler", JSON.stringify(orders));
+
+  const msg = document.getElementById("success-message");
+  msg.style.display = "block";
+  msg.style.opacity = "1";
+
+  setTimeout(() => {
+    msg.style.display = "none";
+  }, 3000);
+}
+
+
+  const orderList = document.getElementById("orderList");
+  if (orderList) {
+    const orders = JSON.parse(localStorage.getItem("siparisler")) || [];
+
+    function renderOrders() {
+      orderList.innerHTML = "";
+
+      if (orders.length === 0) {
+        orderList.innerHTML = "<p style='text-align:center'>Henüz sipariş yok.</p>";
+        return;
+      }
+
+      orders.forEach(order => {
+        const div = document.createElement("div");
+        div.className = "order-item";
+        div.innerHTML = `<strong>${order.name}</strong><div class='order-time'>${order.time}</div>`;
+        orderList.appendChild(div);
+      });
+    }
+
+    renderOrders();
+   function renderOrders() {
+  orderList.innerHTML = "";
+
+  if (orders.length === 0) {
+    orderList.innerHTML = "<p style='text-align:center'>Henüz sipariş yok.</p>";
+    return;
+  }
+
+  orders.forEach(order => {
+    const div = document.createElement("div");
+    div.className = "order-item";
+    div.innerHTML = `<strong>${order.name}</strong><div class='order-time'>${order.time} - <em>Masa ${order.masa || "Bilinmiyor"}</em></div>`;
+    orderList.appendChild(div);
+  });
+}
+
+
+  }
+  function clearOrders() {
+    if (confirm("Tüm siparişleri silmek istediğinize emin misiniz?")) {
+      localStorage.removeItem("siparisler");
+      location.reload();
+    }
+  }
+</script>
+
+</body>
+</html>
