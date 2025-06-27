@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fix 33 Döner Menü</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #793d15;
+      color: #333;
+      margin: 0;
+      padding: 0;
+    }
+
+
+header {
+  text-align: center;
+  padding: 20px;
+  animation: fadeDown 1s ease-out;
+}
+
+
+    .logo {
+  width: 400px;
+  height: 400px;
+  margin-bottom: 10px;
+  animation: fadeDown 1s ease-out;
+}
+
+
+    h1 {
+      text-align: center;
+      color: #dad7d5;
+      margin: 20px 0;
+      font-size: 2.2em;
+    }
+
+    nav {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      background: #fdfcf8;
+      padding: 10px 0;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      border-bottom: 1px solid #ddd;
+    }
+
+    nav button {
+      background: none;
+      border: 2px solid transparent;
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 1em;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    nav button.active {
+      border-color: #ff6f00;
+      color: #ff6f00;
+      font-weight: bold;
+    }
+
+    .menu-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 15px;
+      padding: 15px;
+    }
+
+    .menu-card {
+      background-color: #fff;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.08);
+      padding: 15px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      text-align: center;
+      transform: translateY(10px);
+      opacity: 0;
+      animation: fadeInUp 0.5s forwards;
+    }
+
+    @keyframes fadeInUp {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+  }
+    .menu-card img {
+      width: 100%;
+      max-width: 180px;
+      height: auto;
+      object-fit: cover;
+      border-radius: 8px;
+      display: block;
+      margin: 0 auto 8px auto;
+    }
+
+    .menu-title {
+      font-size: 1em;
+      margin-bottom: 4px;
+      font-weight: bold;
+      color: #2e7d32;
+    }
+
+    .menu-price {
+      font-size: 0.95em;
+      font-weight: bold;
+      color: #ff6f00;
+    }
+
+    .category-section {
+      display: none;
+    }
+
+    .category-section.active {
+      display: block;
+      animation: fadeIn 0.5s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @media (max-width: 480px) {
+      h1 {
+        font-size: 1.5em;
+      }
+      .menu-title {
+        font-size: 0.9em;
+      }
+      .menu-price {
+        font-size: 0.85em;
+      }
+      .success-message {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background-color: #4caf50;
+      color: white;
+      padding: 12px 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.5s ease, transform 0.5s ease;
+      z-index: 9999;
+      transform: translateY(-20px);
+    }
+
+    .success-message.show {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateY(0);
+    }
+    .order-btn {
+  background: linear-gradient(to right, #ff6f00, #ff9000);
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  font-size: 1em;
+  border-radius: 30px;
+  cursor: pointer;
+  font-weight: bold;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease;
+}
+
+.order-btn:hover {
+  background: linear-gradient(to right, #e65c00, #ff6f00);
+  transform: scale(1.05);
+}
+#successBox.show {
+  opacity: 1 !important;
+  transform: translateY(0) !important;
+  pointer-events: auto !important;
+}
+
+}
+
+  </style>
+</head>
+<body>
+  <header>
+  <img src="fixlogo.png" alt="Fix 33 Döner Logo" class="logo">
+  <h1>Fix 33 Döner Menü</h1>
+</header>
+<div style="text-align: center; padding: 10px; border-radius: 15px; border-style: inherit; background: #fdfcf8;">
+  <label for="masaNo"><strong>Masa Numarası:</strong></label>
+  <input type="number" id="masaNo" placeholder="1-50" min="1" max="50" style="padding: 6px 10px; border-radius: 6px; border: 1px solid #ccc;">
+</div>
+
+  <nav style="text-align: center; padding: 10px; border-radius: 15px; border-style: inherit; background: #fdfcf8;">
+    <button class="tab active" data-target="menuler">Menüler</button>
+    <button class="tab" data-target="gelal">Gel-Al Menüler</button>
+    <button class="tab" data-target="doner">Dönerler</button>
+    <button class="tab" data-target="tatli">Tatılar</button>
+    <button class="tab" data-target="icecek">İçecekler</button>
+  </nav>
+
+<div id="menuler" class="category-section active">
+  <div class="menu-grid">
+    <div class="menu-card">
+      <img src="Ekran görüntüsü 2025-06-14 160940.png" alt="Menü">
+      <div class="menu-title">100 GR. Tavuk Döner + Kola + Su</div>
+      <div class="menu-price">99 TL</div>
+      <button class="order-btn" onclick="placeOrder('100 GR. Tavuk Döner + Kola + Su')">Sipariş Ver</button>
+    </div>
+
+    <div class="menu-card">
+      <img src="Ekran görüntüsü 2025-06-14 160940.png" alt="Menü">
+      <div class="menu-title">150 GR. Tavuk Döner + Kola + Su</div>
+      <div class="menu-price">130 TL</div>
+      <button class="order-btn" onclick="placeOrder('150 GR. Tavuk Döner + Kola + Su')">Sipariş Ver</button>
+    </div>
+
+    <div class="menu-card">
+      <img src="Ekran görüntüsü 2025-06-14 160940.png" alt="Menü">
+      <div class="menu-title">100 GR. Antakya Döner + Kola + Su</div>
+      <div class="menu-price">130 TL</div>
+      <button class="order-btn" onclick="placeOrder('100 GR. Antakya Döner + Kola + Su')">Sipariş Ver</button>
+    </div>
+
+    <div class="menu-card">
+      <img src="Ekran görüntüsü 2025-06-14 160940.png" alt="Menü">
+      <div class="menu-title">200 GR. Tavuk Döner + Kola + Su</div>
+      <div class="menu-price">160 TL</div>
+      <button class="order-btn" onclick="placeOrder('200 GR. Tavuk Döner + Kola + Su')">Sipariş Ver</button>
+    </div>
+
+    <div class="menu-card">
+      <img src="Ekran görüntüsü 2025-06-14 160940.png" alt="Menü">
+      <div class="menu-title">250 GR. Tavuk Döner Paket + Kola + Su</div>
+      <div class="menu-price">200 TL</div>
+      <button class="order-btn" onclick="placeOrder('250 GR. Tavuk Döner Paket + Kola + Su')">Sipariş Ver</button>
+    </div>
+  </div>
+</div>
+
+
+<div id="gelal" class="category-section">
+  <div class="menu-grid">
+    <div class="menu-card">
+      <img src="Ekran görüntüsü 2025-06-14 160940.png" alt="Menü">
+      <div class="menu-title">200 GR. Tavuk Döner (Paket) + Kola + Su</div>
+      <div class="menu-price">160 TL</div>
+      <button class="order-btn" onclick="placeOrder('200 GR. Tavuk Döner (Paket) + Kola + Su')">Sipariş Ver</button>
+    </div>
+    <div class="menu-card">
+      <img src="Ekran görüntüsü 2025-06-14 160940.png" alt="Menü">
+      <div class="menu-title">250 GR. Tavuk Döner + Kola + Su (Paket)</div>
+      <div class="menu-price">200 TL</div>
+      <button class="order-btn" onclick="placeOrder('250 GR. Tavuk Döner + Kola + Su (Paket)')">Sipariş Ver</button>
+    </div>
+    <div class="menu-card">
+      <img src="Ekran görüntüsü 2025-06-14 160940.png" alt="Menü">
+      <div class="menu-title">300 GR. Tavuk Döner + Kola + Su (Paket)</div>
+      <div class="menu-price">240 TL</div>
+      <button class="order-btn" onclick="placeOrder('300 GR. Tavuk Döner + Kola + Su (Paket)')">Sipariş Ver</button>
+    </div>
+    <div class="menu-card">
+      <img src="Ekran görüntüsü 2025-06-14 160940.png" alt="Menü">
+      <div class="menu-title">400 GR. Tavuk Döner Paket + Kola + Su</div>
+      <div class="menu-price">270 TL</div>
+      <button class="order-btn" onclick="placeOrder('400 GR. Tavuk Döner Paket + Kola + Su')">Sipariş Ver</button>
+    </div>
+  </div>
+</div>
+
+
+ <div id="doner" class="category-section">
+  <div class="menu-grid">
+    <div class="menu-card">
+      <img src="images.jpg" alt="Döner">
+      <div class="menu-title">100 GR. Tavuk Döner</div>
+      <div class="menu-price">85 TL</div>
+      <button class="order-btn" onclick="placeOrder('100 GR. Tavuk Döner')">Sipariş Ver</button>
+    </div>
+    <div class="menu-card">
+      <img src="images.jpg" alt="Döner">
+      <div class="menu-title">150 GR. Tavuk Döner</div>
+      <div class="menu-price">115 TL</div>
+      <button class="order-btn" onclick="placeOrder('150 GR. Tavuk Döner')">Sipariş Ver</button>
+    </div>
+    <div class="menu-card">
+      <img src="images.jpg" alt="Döner">
+      <div class="menu-title">200 GR. Tavuk Döner</div>
+      <div class="menu-price">150 TL</div>
+      <button class="order-btn" onclick="placeOrder('200 GR. Tavuk Döner')">Sipariş Ver</button>
+    </div>
+    <div class="menu-card">
+      <img src="images.jpg" alt="Döner">
+      <div class="menu-title">250 GR. Tavuk Döner Paket</div>
+      <div class="menu-price">185 TL</div>
+      <button class="order-btn" onclick="placeOrder('250 GR. Tavuk Döner Paket')">Sipariş Ver</button>
+    </div>
+  </div>
+</div>
+
+
+  <div id="tatli" class="category-section">
+  <div class="menu-grid">
+    <div class="menu-card">
+      <img src="Kazandibi_100_g.png" alt="Tatli">
+      <div class="menu-title">Eker Kazan Dibi (100 GR)</div>
+      <div class="menu-price">10 TL</div>
+      <button class="order-btn" onclick="placeOrder('Eker Kazan Dibi (100 GR)')">Sipariş Ver</button>
+    </div>
+    <div class="menu-card">
+      <img src="Sutlac_100_g.png" alt="Tatli">
+      <div class="menu-title">Eker Sütlac (100 GR)</div>
+      <div class="menu-price">10 TL</div>
+      <button class="order-btn" onclick="placeOrder('Eker Sütlac (100 GR)')">Sipariş Ver</button>
+    </div>
+    <div class="menu-card">
+      <img src="Keskul_100_g.png" alt="Tatli">
+      <div class="menu-title">Eker Keşkül (100 GR)</div>
+      <div class="menu-price">10 TL</div>
+      <button class="order-btn" onclick="placeOrder('Eker Keşkül (100 GR)')">Sipariş Ver</button>
+    </div>
+    <div class="menu-card">
+      <img src="Sakizli_Muhallebi_150_g.png" alt="Tatli">
+      <div class="menu-title">Eker Sakızlı Muhallebi (100 GR)</div>
+      <div class="menu-price">10 TL</div>
+      <button class="order-btn" onclick="placeOrder('Eker Sakızlı Muhallebi (100 GR)')">Sipariş Ver</button>
+    </div>
+    <div class="menu-card">
+      <img src="Tavukgogsu_100_g.png" alt="Tatli">
+      <div class="menu-title">Eker Tavuk Göğsü (100 GR)</div>
+      <div class="menu-price">10 TL</div>
+      <button class="order-btn" onclick="placeOrder('Eker Tavuk Göğsü (100 GR)')">Sipariş Ver</button>
+    </div>
+  </div>
+</div>
+
+
+<div id="icecek" class="category-section">
+  <div class="menu-grid">
+    <div class="menu-card">
+      <img src="8011001_yan-7eca8d-1650x1650.jpg" alt="İçecek">
+      <div class="menu-title">Coca Cola (250 ML)</div>
+      <div class="menu-price">20 TL</div>
+      <button class="order-btn" onclick="placeOrder('Coca Cola (250 ML)')">Sipariş Ver</button>
+    </div>
+    <div class="menu-card">
+      <img src="8011004_yan-7d2460-1650x1650.jpg" alt="İçecek">
+      <div class="menu-title">Fanta (250 ML)</div>
+      <div class="menu-price">20 TL</div>
+      <button class="order-btn" onclick="placeOrder('Fanta (250 ML)')">Sipariş Ver</button>
+    </div>
+    <div class="menu-card">
+      <img src="8030110_yan-564215-1650x1650.jpg" alt="İçecek">
+      <div class="menu-title">Sprite (250 ML)</div>
+      <div class="menu-price">20 TL</div>
+      <button class="order-btn" onclick="placeOrder('Sprite (250 ML)')">Sipariş Ver</button>
+    </div>
+    <div class="menu-card">
+      <img src="ekerayran.jpg" alt="İçecek">
+      <div class="menu-title">Eker Ayran (270 ML)</div>
+      <div class="menu-price">15 TL</div>
+      <button class="order-btn" onclick="placeOrder('Eker Ayran (270 ML)')">Sipariş Ver</button>
+    </div>
+    <div class="menu-card">
+      <img src="salgam.jpg" alt="İçecek">
+      <div class="menu-title">Şalgam (200 ML)</div>
+      <div class="menu-price">15 TL</div>
+      <button class="order-btn" onclick="placeOrder('Şalgam (200 ML)')">Sipariş Ver</button>
+    </div>
+    <div class="menu-card">
+      <img src="su.jpg" alt="İçecek">
+      <div class="menu-title">Su (500 ML)</div>
+      <div class="menu-price">5 TL</div>
+      <button class="order-btn" onclick="placeOrder('Su (500 ML)')">Sipariş Ver</button>
+    </div>
+  </div>
+  <div id="successBox" style="
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background-color: #4CAF50;
+  color: white;
+  padding: 15px 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(-20px);
+  transition: all 0.3s ease;
+  z-index: 9999;
+">
+  Sipariş başarıyla alındı!
+</div>
+
+
+<div id="adminNotification" style="
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background-color: #2196F3;
+  color: white;
+  padding: 12px 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.3s ease;
+  z-index: 9999;
+">
+  Yeni bir sipariş alındı!
+</div>
+
+<script>
+  
+  const tabs = document.querySelectorAll(".tab");
+  const sections = document.querySelectorAll(".category-section");
+  tabs.forEach(tab => {
+    tab.addEventListener("click", () => {
+      tabs.forEach(t => t.classList.remove("active"));
+      tab.classList.add("active");
+
+      sections.forEach(sec => sec.classList.remove("active"));
+      document.getElementById(tab.dataset.target).classList.add("active");
+    });
+  });
+ function placeOrder(itemName) {
+  const masaNo = document.getElementById("masaNo").value.trim();
+  if (!masaNo) {
+    alert("Lütfen masa numarasını giriniz.");
+    return;
+  }
+
+  const now = new Date().toLocaleString();
+  const orders = JSON.parse(localStorage.getItem("siparisler")) || [];
+  orders.push({ name: itemName, time: now, masa: masaNo });
+  localStorage.setItem("siparisler", JSON.stringify(orders));
+
+  const box = document.getElementById("successBox");
+  box.classList.add("show");
+  setTimeout(() => {
+    box.classList.remove("show");
+  }, 3000);
+}
+</script>
+<script>
+  window.addEventListener("storage", function(event) {
+    if (event.key === "siparisler") {
+      const box = document.getElementById("adminNotification");
+      box.style.opacity = "1";
+
+      setTimeout(() => {
+        box.style.opacity = "0";
+      }, 3000);
+
+      if (typeof renderOrders === "function") {
+        renderOrders();
+      }
+    }
+  });
+</script>
+<script>
+  window.addEventListener("storage", function(event) {
+    if (event.key === "siparisler") {
+      const box = document.getElementById("adminNotification");
+      box.style.opacity = "1";
+
+      setTimeout(() => {
+        box.style.opacity = "0";
+      }, 3000);
+
+      if (typeof renderOrders === "function") {
+        renderOrders();
+      }
+    }
+  });
+</script>
+</script>
+</body>
+</html>
